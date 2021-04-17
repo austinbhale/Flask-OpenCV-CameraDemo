@@ -26,9 +26,9 @@ def face_and_eye_detection(img):
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 # Prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(4,6,0)
-# checkerboard of size (5 x 7) is used
-objp = np.zeros((5*7,3), np.float32)
-objp[:,:2] = np.mgrid[0:5,0:7].T.reshape(-1,2)
+# checkerboard of size (6 x 9) is used
+objp = np.zeros((6*9,3), np.float32)
+objp[:,:2] = np.mgrid[0:6,0:9].T.reshape(-1,2)
 
 # Arrays to store object points and image points from all the images.
 objpoints = [] # 3d point in real world space
@@ -46,7 +46,7 @@ def calibrate_camera(img, take_image):
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
     # Find the chess board corners
-    success, corners = cv2.findChessboardCorners(gray, (5,7), None)
+    success, corners = cv2.findChessboardCorners(gray, (6,9), None)
 
     # If found, add object points, image points (after refining them)
     if success:
@@ -55,7 +55,7 @@ def calibrate_camera(img, take_image):
         corners2 = cv2.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
 
         # Draw and display the corners
-        img = cv2.drawChessboardCorners(img, (5,7), corners2, success)
+        img = cv2.drawChessboardCorners(img, (6,9), corners2, success)
 
         if take_image:
             objpoints.append(objp)

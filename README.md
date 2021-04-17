@@ -14,4 +14,5 @@ python app.py
 ```
 
 ## Other Notes
-(Optional) Print any of the 50 aruco markers located in [ArUco-imgs/](ArUco-imgs/)
+- Print any of the 50 aruco markers located in [ArUco-imgs/](ArUco-imgs/)
+- Print the 9x6 [chessboard pattern](chessboard-pattern.png)
