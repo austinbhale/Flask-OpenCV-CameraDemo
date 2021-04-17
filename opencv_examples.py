@@ -22,11 +22,10 @@ def face_and_eye_detection(img):
     return img
 
 ### Setup Camera Calibration Data ###
-
-# termination criteria
+# Termination criteria specifies the max # of iterations and the desired accuracy at which the alg stops
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
-# prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
+# Prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(4,6,0)
 # checkerboard of size (5 x 7) is used
 objp = np.zeros((5*7,3), np.float32)
 objp[:,:2] = np.mgrid[0:5,0:7].T.reshape(-1,2)
@@ -36,7 +35,6 @@ objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
 num_images_calibrated = 0
-
 gray = None
 
 # Adapted from the docs: https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
@@ -69,12 +67,15 @@ def calibrate_camera(img, take_image):
     # We still return the image even when we're unable to find the chessboard corners
     return img
 
-
+# Camera matrix, distortion coefficients, rotation vectors, translation vectors
+# Necessary for projecting 3D points w.r.t. the world reference plane onto the image plane
+# For more info, see Pinhole Camera Model: https://en.wikipedia.org/wiki/Pinhole_camera_model
 mtx, dist, rvecs, tvecs = (np.array([]),)*4
 def calibrate_saved_images():
     if num_images_calibrated > 0:
         global mtx, dist, rvecs, tvecs
         success, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None)
+        # Print the re-projection error (RMS), usually b/t 0.1 and 1.0 pixels in a good calibration
         print(success)
 
 # Adapted from the docs: https://docs.opencv.org/master/d5/dae/tutorial_aruco_detection.html
@@ -90,26 +91,23 @@ def detect_aruco_markers(img):
     # check if the ids list is not empty
     if np.all(ids != None):
 
-        # estimate pose of each marker and return the values
-        # rvet and tvec-different from camera coefficients
+        # Estimate pose of each marker and return the values
         rvec, tvec ,_ = cv2.aruco.estimatePoseSingleMarkers(corners, 0.05, mtx, dist)
-        #(rvec-tvec).any() # get rid of that nasty numpy value array error
 
         for i in range(0, ids.size):
-            # draw axis for the aruco markers
             cv2.aruco.drawAxis(img, mtx, dist, rvec[i], tvec[i], 0.1)
 
-        # draw a square around the markers
+        # Draw a square around the markers
         cv2.aruco.drawDetectedMarkers(img, corners)
 
-        # code to show ids of the marker found
-        strg = ''
+        # Show ids of the marker found
+        str_ids = ''
         for i in range(0, ids.size):
-            strg += str(ids[i][0])+', '
+            str_ids += str(ids[i][0])+', '
 
-        cv2.putText(img, "Id: " + strg, (0,64), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0),2,cv2.LINE_AA)
+        cv2.putText(img, "Id: " + str_ids, (0,64), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0),2,cv2.LINE_AA)
     else:
-        # code to show 'No Ids' when no markers are found
+        # Show 'No Ids' when no markers are found
         cv2.putText(img, "No Ids", (0,64), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0),2,cv2.LINE_AA)
 
     return img

@@ -1,4 +1,6 @@
-# AR & Computer Vision on the Web! Examples on how to integrate OpenCV and Flask.
+# AR & Computer Vision on the Web!
+Examples on how to integrate OpenCV and Flask.
+
 ## Install the following packages
 ```
 pip install flask
