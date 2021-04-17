@@ -5,6 +5,7 @@ import cv2
 def face_and_eye_detection(img):
     cv2.putText(img,'Face & Eye Detection',(10,100), cv2.FONT_HERSHEY_SIMPLEX, 1,(255,255,255),2)
 
+    # OpenCV classifiers that have been trained given "positive" face images and "negative" non-face images
     face_cascade = cv2.CascadeClassifier('xml/haarcascade_frontalface_default.xml')
     eye_cascade = cv2.CascadeClassifier('xml/haarcascade_eye.xml')
 
@@ -30,13 +31,16 @@ criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 objp = np.zeros((6*9,3), np.float32)
 objp[:,:2] = np.mgrid[0:6,0:9].T.reshape(-1,2)
 
-# Arrays to store object points and image points from all the images.
+# Arrays to store object points and image points from all the images
 objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
 num_images_calibrated = 0
 gray = None
 
+# The raw image obtained from the camera is not the real view from the camera
+# We need to transform this raw image into something that would look like if we were to use the ideal camera
+# Once calibrated, we can identify the real-world coordinates of detected objects (e.g. aruco markers)
 # Adapted from the docs: https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_calib3d/py_calibration/py_calibration.html
 def calibrate_camera(img, take_image):
     global num_images_calibrated
@@ -88,7 +92,7 @@ def detect_aruco_markers(img):
 
     (corners, ids, rejected) = cv2.aruco.detectMarkers(img, arucoDict, parameters=parameters)
 
-    # check if the ids list is not empty
+    # Check if the ids list is not empty
     if np.all(ids != None):
 
         # Estimate pose of each marker and return the values

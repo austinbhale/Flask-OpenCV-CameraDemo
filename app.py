@@ -1,4 +1,4 @@
-# Import the flask and opencv libraries
+# Import the flask and OpenCV libraries
 from flask import Flask, render_template, Response, request
 from flask_wtf.csrf import CSRFProtect
 import cv2
@@ -19,11 +19,11 @@ b_face_and_eye, b_calibrate, b_aruco_markers, b_take_calibration_image = (False,
 def index():
     return render_template('index.html', num_calibrations=num_images_calibrated)
 
-# Enable opencv to capture our webcam
+# Enable OpenCV to capture our webcam
 capture = cv2.VideoCapture(0)
 # Video capture also lets you specify video files, image sequences, and additional cameras
 
-# Here, we're going to define a simple function that reads our camera image and sends it from the server to client
+# Here, we're going to read our camera image and send it from the server to client
 def create_frames():
     global b_take_calibration_image
 
@@ -45,11 +45,11 @@ def create_frames():
             ret, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
 
+            # Formats the frame as a response chunk with a content type of image/jpeg
             # We use yield here to produce a sequence of frames
             # We also retain our while loop's previous state to resume where it left off
             yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + frame + b'\r\n') 
                     ## Server -> Client ##
-                    # Formats the frame as a response chunk with a content type of image/jpeg
         else:
             break
 
