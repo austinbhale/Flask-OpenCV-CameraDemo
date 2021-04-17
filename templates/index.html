@@ -1,0 +1,56 @@
+<html>
+<style>
+    html {
+        text-align: center;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+
+    body {
+        margin: 0 auto;
+        padding: 2%;
+    }
+</style>
+
+<body>
+    <form action="" method="POST">
+        <!-- insert form buttons here -->
+    </form>
+    <img src="{{ url_for('video_feed') }}" width="90%">
+</body>
+
+<!-- Include minified JQuery for ajax communication -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+    // Send post data to Flask. Prevents refreshing the page on each click.
+    var clickedName;
+    $("form").on("submit", function (e) {
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('handle_data') }}",
+            contentType: 'application/json;charset=UTF-8',
+            data: JSON.stringify({ 'data': clickedName })
+        });
+        e.preventDefault();
+    });
+
+    // Dynamic HTML for going to the calibration menu and back.
+    $(document).ready(function () {
+        updateForm();
+        $('form').click(updateForm);
+    });
+
+    var whichForm = '/form_main';
+    function updateForm() {
+        whichForm = (clickedName == 'calibrate' || clickedName == 'capture')
+            ? '/form_calibration' : '/form_main';
+
+        $.ajax(whichForm).done(function (reply) {
+            $('form').html(reply);
+            console.log(reply);
+            console.log($('form'));
+        });
+    }
+</script>
+
+</html>
