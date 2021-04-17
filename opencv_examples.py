@@ -84,9 +84,7 @@ def calibrate_saved_images():
 
 # Adapted from the docs: https://docs.opencv.org/master/d5/dae/tutorial_aruco_detection.html
 def detect_aruco_markers(img):
-    if mtx.size == 0:
-        raise Exception("calibrate saved images before detecting aruco markers")
-    
+
     arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
     parameters = cv2.aruco.DetectorParameters_create()
 
@@ -94,15 +92,16 @@ def detect_aruco_markers(img):
 
     # Check if the ids list is not empty
     if np.all(ids != None):
-
-        # Estimate pose of each marker and return the values
-        rvec, tvec ,_ = cv2.aruco.estimatePoseSingleMarkers(corners, 0.05, mtx, dist)
-
-        for i in range(0, ids.size):
-            cv2.aruco.drawAxis(img, mtx, dist, rvec[i], tvec[i], 0.1)
-
         # Draw a square around the markers
         cv2.aruco.drawDetectedMarkers(img, corners)
+
+        # If our camera is calibrated, we can more accurately track 3D world points, and draw axes
+        if mtx.size > 0:
+            # Estimate pose of each marker and return the values
+            rvec, tvec ,_ = cv2.aruco.estimatePoseSingleMarkers(corners, 0.05, mtx, dist)
+
+            for i in range(0, ids.size):
+                cv2.aruco.drawAxis(img, mtx, dist, rvec[i], tvec[i], 0.1)
 
         # Show ids of the marker found
         str_ids = ''
