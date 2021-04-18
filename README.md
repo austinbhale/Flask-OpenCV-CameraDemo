@@ -13,6 +13,6 @@ pip install opencv-python
 python app.py
 ```
 
-## Other Notes
+## Materials
 - Print any of the 50 aruco markers located in [ArUco-imgs/](ArUco-imgs/)
 - Print the 9x6 [chessboard pattern](chessboard-pattern.png)
