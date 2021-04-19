@@ -8,12 +8,6 @@ from opencv_examples import face_and_eye_detection, calibrate_camera, detect_aru
 # Initialize the Flask app
 app = Flask(__name__)
 
-# Exempt csrf for form submissions so we don't have to reload the page every time we click a button
-csrf = CSRFProtect(app)
-
-# Flags for enabling which button the user clicked
-b_face_and_eye, b_calibrate, b_aruco_markers, b_take_calibration_image = (False,)*4
-
 # Render our index page
 @app.route('/')
 def index():
@@ -22,6 +16,9 @@ def index():
 # Enable OpenCV to capture our webcam
 capture = cv2.VideoCapture(0)
 # Video capture also lets you specify video files, image sequences, and additional cameras
+
+# Flags for enabling which button the user clicked
+b_face_and_eye, b_calibrate, b_aruco_markers, b_take_calibration_image = (False,)*4
 
 # Here, we're going to read our camera image and send it from the server to client
 def create_frames():
@@ -57,6 +54,9 @@ def create_frames():
 @app.route('/video_feed')
 def video_feed():
     return Response(create_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# Exempt csrf for form submissions so we don't have to reload the page every time we click a button
+csrf = CSRFProtect(app)
 
 ## Handles form logic to see if the user is on the calibration page or not ##
 @csrf.exempt
